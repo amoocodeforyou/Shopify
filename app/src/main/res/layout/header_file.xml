@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="@color/tool_light"
+    android:layout_height="wrap_content">
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="false"
+        app:lottie_rawRes="@raw/header_anim">
+
+    </com.airbnb.lottie.LottieAnimationView>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Shopify"
+        android:textSize="20sp"
+        android:layout_marginStart="20dp"
+        android:textColor="@color/white">
+
+    </TextView>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=" The e-commerce platform that cares."
+        android:textSize="12sp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginStart="20dp"
+        android:textColor="@color/white">
+
+    </TextView>
+
+
+
+
+
+
+
+</LinearLayout>
