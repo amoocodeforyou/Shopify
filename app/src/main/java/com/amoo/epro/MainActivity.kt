@@ -6,18 +6,22 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.amoo.epro.adapters.CategoryAdapter
 import com.amoo.epro.adapters.MainAdapter
 import com.amoo.epro.databinding.ActivityMainBinding
+import com.amoo.epro.models.CategoryCard
 import com.amoo.epro.models.MainCard
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.ktx.Firebase
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var binding : ActivityMainBinding
-    private lateinit var toggle : ActionBarDrawerToggle
-    private lateinit var list : ArrayList<MainCard>
-    private lateinit var adapter : MainAdapter
-    private lateinit var db : FirebaseFirestore
+    private lateinit var binding: ActivityMainBinding
+    private lateinit var toggle: ActionBarDrawerToggle
+    private lateinit var list: ArrayList<MainCard>
+    private lateinit var categoryList: ArrayList<CategoryCard>
+    private lateinit var db: FirebaseFirestore
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -27,43 +31,43 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.title = "Shopify"
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
-        toggle = ActionBarDrawerToggle(this@MainActivity,binding.drawerLayout,binding.mainTool,
-        R.string.open,R.string.close)
+        toggle = ActionBarDrawerToggle(
+            this@MainActivity, binding.drawerLayout, binding.mainTool,
+            R.string.open, R.string.close
+        )
 
         binding.drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
 
-
+        // MainCard Recyclerview
         getData()
 
-
-
-
+        // Category RecyclerView
+        categoryData()
 
         // Setting NavBar Item Click Listener
         binding.navigationView.setNavigationItemSelectedListener {
-            when(it.itemId){
+            when (it.itemId) {
                 R.id.feedback -> {
-                    Toast.makeText(this,"You click on ${it.title}",Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, "You click on ${it.title}", Toast.LENGTH_LONG).show()
                     binding.drawerLayout.closeDrawers()
 
                 }
                 R.id.privacy -> {
-                    Toast.makeText(this,"You click on ${it.title}",Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, "You click on ${it.title}", Toast.LENGTH_LONG).show()
                     binding.drawerLayout.closeDrawers()
 
                 }
                 R.id.terrms -> {
-                    Toast.makeText(this,"You click on ${it.title}",Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, "You click on ${it.title}", Toast.LENGTH_LONG).show()
                     binding.drawerLayout.closeDrawers()
 
                 }
                 R.id.exit -> {
-                    Toast.makeText(this,"You click on ${it.title}",Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, "You click on ${it.title}", Toast.LENGTH_LONG).show()
                     binding.drawerLayout.closeDrawers()
 
                 }
-
 
 
             }
@@ -78,15 +82,17 @@ class MainActivity : AppCompatActivity() {
         list = ArrayList()
         db = FirebaseFirestore.getInstance()
         db.collection("main_card")
-            .get()
-            .addOnSuccessListener { result ->
-                for (document in result) {
-                    val url = document.data.getValue("url").toString()
-                    val price = document.data.getValue("price") as Int
-                    val category = document.data.getValue("category").toString()
-                    val title = document.data.getValue("title").toString()
-                    val description = document.data.getValue("description").toString()
-                    Log.d(TAG, "$title => $description")
+            .get().addOnSuccessListener { task ->
+                if (!task.isEmpty) {
+                    val cardList = task.documents
+                    for (d: DocumentSnapshot in cardList) {
+                        val data: MainCard? = d.toObject(MainCard::class.java)
+                        list.add(data!!)
+                        list.reverse()
+                    }
+
+                } else {
+                    Toast.makeText(this, "No data found in Database", Toast.LENGTH_SHORT).show()
                 }
             }
             .addOnFailureListener { exception ->
@@ -94,9 +100,23 @@ class MainActivity : AppCompatActivity() {
             }
 
 
+        binding.mainCard.layoutManager = LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false)
+        val adapter = MainAdapter(list,this@MainActivity)
+        binding.mainCard.adapter = adapter
 
-     }
+    }
 
+    private fun categoryData() {
+        categoryList = ArrayList()
+        categoryList.add(CategoryCard(R.drawable.maincardsamplepic,"Shoes"))
+        categoryList.add(CategoryCard(R.drawable.maincardsamplepic,"Clothes"))
+        categoryList.add(CategoryCard(R.drawable.maincardsamplepic,"Watches"))
+        categoryList.add(CategoryCard(R.drawable.maincardsamplepic,"Electronics"))
+
+        binding.categoryCard.layoutManager = GridLayoutManager(this@MainActivity,2)
+        val adapter = CategoryAdapter(categoryList)
+        binding.categoryCard.adapter = adapter
+    }
 
 
 }

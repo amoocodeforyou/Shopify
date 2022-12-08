@@ -15,7 +15,6 @@ class CategoryAdapter(private val list: ArrayList<CategoryCard>) :
     inner class ViewHOlder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val image: ImageView = itemView.findViewById(R.id.category_image)
         val title: TextView = itemView.findViewById(R.id.category_title)
-
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHOlder {
